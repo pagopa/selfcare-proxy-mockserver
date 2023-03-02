@@ -1,0 +1,120 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/authentication",
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "REGEX",
+        "regex": "^[\\w-]+\\.[\\w-]+\\.[\\w-]+$"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "headers": {
+        "Content-Type": [
+          "text/plain;charset=UTF-8"
+        ]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/authentication",
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":400,\"body\":{\"timestamp\":\"$date.iso\",\"status\":\"400\",\"error\":\"NotFound\",\"path\":\"/wspa/auth/token\"}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/DLLDGI53T30I324E",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"DLLDGI53T30I324E\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"01501320442\", \"denominazione\":\"DIEGO DELLA VALLE & C. S.R.L.\"}, {\"cfImpresa\":\"02492030446\", \"denominazione\":\"DEVA FINANCE S.R.L.\"} , {\"cfImpresa\":\"01113570442\", \"denominazione\":\"TOD'S S.R.L.\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CIACIA80A01H501X",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":500, \"body\":{\"code\": \"WSPA_ERR_04\", \"appName\": \"wspa-lref\", \"description\": \"Internal server error\", \"timestamp\": \"$date.iso\"}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/{taxId}",
+      "pathParameters": {
+        "taxId": [
+          "^([A-Z]{6}[0-9LMNPQRSTUV]{2}[A-Z]{1}[0-9LMNPQRSTUV]{2}[A-Z]{1}[0-9LMNPQRSTUV]{3}[A-Z]{1})|([0-9]{11})$"
+        ]
+      },
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200, \"body\":{\"code\": \"WSPA_ERR_04\", \"appName\": \"wspa-lref\", \"description\": \"Legale Rappresentante not found.\", \"timestamp\": \"$date.iso\"}}"
+    }
+  }
+]

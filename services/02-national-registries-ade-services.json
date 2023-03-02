@@ -1,0 +1,42 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/national-registries-private/agenzia-entrate/legal",
+      "body": {
+        "filter": {
+          "taxId": "DLLDGI53T30I324E",
+          "vatNumber": "11023406579"
+        }
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "verificationResult": true,
+        "resultDetail": "XX00",
+        "resultCode": "00"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/national-registries-private/agenzia-entrate/legal",
+      "body": {
+        "filter": {
+          "taxId": "DLLDGI53T30I324E",
+          "vatNumber": "12433658872"
+        }
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "verificationResult": false,
+        "resultDetail": "XX00",
+        "resultCode": "00"
+      }
+    }
+  }
+]

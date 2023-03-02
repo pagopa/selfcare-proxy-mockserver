@@ -1,0 +1,50 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/national-registries-private/registro-imprese/address",
+      "body": {
+        "filter": {
+          "taxId": "01501320442"
+        }
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dateTimeExtraction\":\"$date.iso\",\"taxId\":\"01501320442\",\"professionalAddress\":{\"municipality\":\"Roma\",\"province\":\"RM\",\"description\":\"\",\"address\":\"Via del Corso 100\",\"zip\":\"00100\"}}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/national-registries-private/registro-imprese/address",
+      "body": {
+        "filter": {
+          "taxId": "01113570442"
+        }
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dateTimeExtraction\":\"$date.iso\",\"taxId\":\"01113570442\",\"professionalAddress\":{\"municipality\":\"Napoli\",\"province\":\"NA\",\"description\":\"\",\"address\":\"Via Salvator Rosa 10\",\"zip\":\"80136\"}}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/selfcaremock/national-registries-private/registro-imprese/address",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "filter": {
+            "taxId": "${json-unit.regex}([A-Z]{6}[0-9LMNPQRSTUV]{2}[A-Z]{1}[0-9LMNPQRSTUV]{2}[A-Z]{1}[0-9LMNPQRSTUV]{3}[A-Z]{1})|([0-9]{11})"
+          }
+        }
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dateTimeExtraction\":\"$date.iso\",\"taxId\":\"$json.parse($!request.body).filter.taxId\",\"professionalAddress\":{}}}"
+    }
+  }
+]

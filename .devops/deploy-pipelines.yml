@@ -59,37 +59,8 @@ resources:
 
 stages:
   # Prepare_artifact
-  - stage: Prepare_artifact
-    jobs:
-      - job: 'prepare_artifact'
-        steps:
-          # Build application
-          - template: templates/node-job-setup/template.yaml@pagopaCommons
-          - script: yarn predeploy
-            displayName: 'Build'
-          - task: Docker@2
-            displayName: 'Publish_image_to_${{ parameters.environment }}'
-            condition: succeeded()
-            inputs:
-              containerRegistry: '$(dockerRegistryServiceConnection)'
-              repository: '$(imageRepository)'
-              command: 'buildAndPush'
-              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-              buildContext: '$(Build.Repository.LocalPath)'
-              tags: |
-                $(Build.BuildId)
-                latest
-                ${{ parameters.environment }}
-                ${{ parameters.version }}
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish Artifact manifests'
-            inputs:
-              targetPath: '$(Build.Repository.LocalPath)/.devops/kubernetes'
-              artifact: 'manifests'
-              publishLocation: 'pipeline'
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
-    dependsOn: [ 'Prepare_artifact' ]
     condition: succeeded()
     jobs:
       - deployment: 'Deploy_to_${{ parameters.environment }}'

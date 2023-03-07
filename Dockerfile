@@ -1,5 +1,2 @@
-
-
-
-
-FROM mockserver/mockserver:5.15.0
+ARG APP_IMAGE=hello-world:linux
+FROM $APP_IMAGE

@@ -13,8 +13,7 @@ app:
   runAsUser: 65534
 
 image:
-  snapshot: false
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 

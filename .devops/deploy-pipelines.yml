@@ -56,20 +56,6 @@ variables:
 pool:
   vmImage: 'ubuntu-latest'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 stages:
   - stage: 'DataPreparation'
     displayName: 'Configuring_environment_to_deploy_into_${{ variables.environment }}'

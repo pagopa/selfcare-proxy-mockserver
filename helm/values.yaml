@@ -13,9 +13,10 @@ app:
   runAsUser: 65534
 
 image:
-  repository: mockserver
   snapshot: false
   pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
 
 service:
   annotations: {}
@@ -23,9 +24,11 @@ service:
   externalIPs: []
   loadBalancerIP: ""
   loadBalancerSourceRanges: []
-  type: NodePort
-  port: 1080
+  type: ClusterIP
+  appPort: 1080
   nodePort: ""
+  monitoringPort: 9095
+  monitoringTargetPort: monitoring
   test:
     image: radial/busyboxplus:curl
 
@@ -34,9 +37,9 @@ ingress:
   className: ""
   annotations: {}
   hosts:
-    - host: mockserver.local
+    - host: ""
       paths:
-        - path: /
+        - path: "/(mockserver)/(.*)"
           pathType: ImplementationSpecific
   tls: []
 

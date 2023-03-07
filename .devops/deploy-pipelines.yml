@@ -4,6 +4,9 @@
 trigger: none
 pr: none
 
+resources:
+  - repo: self
+
 parameters:
   - name: environment
     displayName: Target Environment
@@ -16,7 +19,7 @@ parameters:
   - name: version
     displayName: Version of the docker image
     type: string
-    default: 1.4.3
+    default: 5.15.0
   - name: publishBakedManifests
     displayName: Publish Baked Manifests
     type: boolean
@@ -26,41 +29,123 @@ variables:
   dockerfileRelativePath: '$(DOCKERFILE)' # DockerfileV1
   imageRepository: '$(K8S_IMAGE_REPOSITORY_NAME)'
   deployNamespace: '$(DEPLOY_NAMESPACE)'
+  deploymentName: '$(DEPLOYMENT_NAME)'
   port: 8080
+  # Agent VM image name for Build
+  vmImageNameDefault: 'ubuntu-latest'
+
   ${{ if eq(parameters['environment'], 'DEV') }}:
     dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(DEV_AGENT_POOL)
-    replicas: $(DEV_REPLICAS)
+    replicas: 1 #$(DEV_REPLICAS)
   ${{ if eq(parameters['environment'], 'UAT') }}:
     dockerRegistryServiceConnection: '$(UAT_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(UAT_AGENT_POOL)
-    replicas: $(UAT_REPLICAS)
+    replicas: 1 #$(UAT_REPLICAS)
   ${{ if eq(parameters['environment'], 'PROD') }}:
     dockerRegistryServiceConnection: '$(PROD_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(PROD_AGENT_POOL)
-    replicas: $(PROD_REPLICAS)
+    replicas: 1 #$(PROD_REPLICAS)
 
 pool:
   vmImage: 'ubuntu-latest'
 
-resources:
-  repositories:
-    - repository: pagopaCommons
-      type: github
-      name: pagopa/azure-pipeline-templates
-      ref: refs/tags/v14
-      endpoint: 'io-azure-devops-github-ro'
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 stages:
-  # Prepare_artifact
+  - stage: 'DataPreparation'
+    displayName: 'Configuring_environment_to_deploy_into_${{ variables.environment }}'
+    jobs:
+      - job: DeterminingVersion
+        displayName: DeterminingVersion
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: Bash@3
+            displayName: Get docker image version
+            name: getDockerImageVersion
+            condition: succeeded()
+            env:
+              VALUES_FILE: "helm/values.yaml"
+              CHART_FILE: "helm/Chart.yaml"
+            inputs:
+              targetType: 'inline'
+              script: |
+                version=$(cat $VALUES_FILE | grep '^  tag:' | sed 's/^  tag:\s*//')
+                echo -e "\nappVersion: \"$version\"" >> $CHART_FILE
+                echo "##vso[task.setvariable variable=dockerImageVersion;isOutput=true]$version"
+              failOnStderr: true
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Artifact helm'
+            inputs:
+              targetPath: 'helm'
+              artifact: 'helm'
+              publishLocation: 'pipeline'
+  - stage: 'Build'
+    displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
+    condition: and( succeeded(), ${{ parameters.executeBuild }} )
+    dependsOn: DataPreparation
+    variables:
+      dockerImageVersion: $[ stageDependencies.DataPreparation.DeterminingVersion.outputs['getDockerImageVersion.dockerImageVersion'] ]
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: Docker@2
+            displayName: 'Build_image'
+            condition: succeeded()
+            inputs:
+              containerRegistry: '$(COMMON_CONTAINER_REGISTRY_SERVICE_CONN)'
+              repository: '$(imageRepository)'
+              command: 'Build'
+              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+              buildContext: '$(Build.Repository.LocalPath)'
+              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
+              tags: |
+                $(Build.BuildNumber)
+                latest
+                $(dockerImageVersion)
+          - script: |
+              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
+              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'
+              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(dockerImageVersion)' '$(containerRegistry)/$(imageRepository):$(dockerImageVersion)'
+            displayName: 'Tag_image'
+          - task: Docker@2
+            displayName: 'Publish_image_to_${{ variables.environment }}'
+            condition: succeeded()
+            inputs:
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(imageRepository)'
+              command: 'push'
+              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+              buildContext: '$(Build.Repository.LocalPath)'
+              tags: |
+                $(Build.BuildNumber)
+                latest
+                $(dockerImageVersion)
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
+    dependsOn: ['DataPreparation', 'Build']
     condition: succeeded()
     jobs:
       - deployment: 'Deploy_to_${{ parameters.environment }}'
@@ -76,35 +161,33 @@ stages:
                 - task: DownloadPipelineArtifact@2
                   inputs:
                     buildType: 'current'
-                    artifactName: 'manifests'
-                    targetPath: '$(Pipeline.Workspace)/manifests/'
-                - task: KubernetesManifest@0
-                  name: bake
-                  displayName: Bake K8s manifests from Helm chart
+                    artifactName: 'helm'
+                    targetPath: '$(Pipeline.Workspace)/helm'
+                - task: HelmDeploy@0
+                  displayName: Helm upgrade
                   inputs:
+                    kubernetesServiceEndpoint: ${{ variables.kubernetesServiceConnection }}
                     namespace: '$(deployNamespace)'
-                    action: bake
-                    renderType: helm2
-                    helmChart: '$(Pipeline.Workspace)/manifests/helm/'
-                    overrides: |
-                      replicas:$(replicas)
-                      port:$(port)
-                      containerRegistry:$(containerRegistry)
-                      imageRepository:$(imageRepository)
-                - task: PublishPipelineArtifact@1
-                  displayName: 'Publish Artifact baked manifests'
-                  condition: ${{ parameters.publishBakedManifests }}
-                  inputs:
-                    targetPath: $(bake.manifestsBundle)
-                    artifact: 'baked'
-                    publishLocation: 'pipeline'
+                    command: upgrade
+                    chartType: filepath
+                    chartPath: $(Pipeline.Workspace)/helm
+                    chartName: $(K8S_IMAGE_REPOSITORY_NAME)
+                    releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
+                    valueFile: "$(Pipeline.Workspace)/helm/values-${{ lower(variables.environment) }}.yaml"
+                    install: true
+                    waitForExecution: true
+                    arguments: "--timeout 2m0s"
                 - task: KubernetesManifest@0
-                  displayName: Deploy to Kubernetes cluster
+                  displayName: Patch deployment to force the reload
                   inputs:
-                    action: deploy
-                    rolloutStatusTimeout: 120
                     kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
                     namespace: '$(deployNamespace)'
-                    manifests: |
-                      $(bake.manifestsBundle)
-                    containers: '$(containerRegistry)/$(imageRepository):${{ parameters.version }}'
+                    action: patch
+                    kind: deployment
+                    name: '$(deploymentName)'
+                    mergeStrategy: strategic
+                    patch: '{"spec":{"template":{"metadata":{"annotations":{"buildNumber":"$(Build.BuildNumber)"}}}}}'
+
+
+
+                    

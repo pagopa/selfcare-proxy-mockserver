@@ -20,10 +20,10 @@ parameters:
     displayName: Version of the docker image
     type: string
     default: 5.15.0
-  - name: publishBakedManifests
-    displayName: Publish Baked Manifests
+  - name: 'executeBuild'
+    displayName: 'Remove this flag to skip build and proceed to deploy a docker image previously built'
     type: boolean
-    default: false
+    default: true
 
 variables:
   dockerfileRelativePath: '$(DOCKERFILE)' # DockerfileV1

@@ -1,115 +1,86 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "release.name" . }}
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "this.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ template "chart.name" . }}
-    release: {{ .Release.Name }}
-    chart: {{ template "chart.name_version" . }}
+    {{- include "this.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app: {{ template "chart.name" . }}
-      release: {{ .Release.Name }}
+      {{- include "this.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-{{- if .Values.podAnnotations }}
-      # Allows custom annotations to be specified
       annotations:
-{{ toYaml .Values.podAnnotations | indent 8 }}
-{{- end }}
-      name: {{ template "release.name" . }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmaps.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: {{ template "chart.name" . }}
-        release: {{ .Release.Name }}
+        actorSystemName: {{ include "this.fullname" . }}
+        {{- include "this.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ .Values.app.serviceAccountName }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ template "release.name" . }}
-          image: {{ if .Values.image.repositoryNameAndTag }}{{ .Values.image.repositoryNameAndTag }}{{- else }}{{ .Values.image.repository }}/mockserver:mockserver-{{- if .Values.image.snapshot }}snapshot{{- else }}{{ .Chart.AppVersion }}{{- end }}{{- end }}
-{{- if .Values.image.snapshot }}
-          imagePullPolicy: Always
-{{- else }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- end }}
+        - name: {{ .Chart.Name }}
           securityContext:
-{{- if .Values.app.runAsUser }}
-            runAsUser: {{ .Values.app.runAsUser }}
-{{- end }}
-            readOnlyRootFilesystem: {{ .Values.app.readOnlyRootFilesystem }}
-            allowPrivilegeEscalation: false
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.commandConfig }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "this.fullname" . }}
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           ports:
-            - name: serviceport
-              containerPort: {{ .Values.app.serverPort }}
+            - name: management
+              containerPort: 8558
+              protocol: TCP
+            - name: http
+              containerPort: 8088
+              protocol: TCP
+            - name: monitoring
+              containerPort: 9095
               protocol: TCP
           readinessProbe:
-            tcpSocket:
-              port: serviceport
-            initialDelaySeconds: 2
-            periodSeconds: 2
-            successThreshold: 1
-            failureThreshold: 10
+            httpGet:
+              path: /ready
+              port: management
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 30
           livenessProbe:
-            tcpSocket:
-              port: serviceport
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 10
-          env:
-            - name: MOCKSERVER_LOG_LEVEL
-              value: {{ .Values.app.logLevel | quote }}
-            - name: SERVER_PORT
-              value: {{ .Values.app.serverPort | quote }}
-{{- if .Values.app.proxyRemoteHost }}
-            - name: PROXY_REMOTE_HOST
-              value: {{ .Values.app.proxyRemoteHost | quote }}
-{{- end }}
-{{- if .Values.app.proxyRemotePort }}
-            - name: PROXY_REMOTE_PORT
-              value: {{ .Values.app.proxyRemotePort | quote }}
-{{- end }}
-{{- if .Values.app.jvmOptions }}
-            - name: JVM_OPTIONS
-              value: {{ .Values.app.jvmOptions | quote }}
-{{- end }}
-{{- if .Values.app.mountConfigMap }}
-            - name: MOCKSERVER_PROPERTY_FILE
-              value: /config/{{ .Values.app.propertiesFileName }}
-{{- end }}
-          volumeMounts:
-            - name: config-volume
-              mountPath: /config
-{{- if .Values.app.mountedLibsConfigMapName}}
-            - name: libs-volume
-              mountPath: /libs
-{{- end}}
-{{- if .Values.resources }}
+            httpGet:
+              path: "/alive"
+              port: management
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 30
           resources:
-{{ toYaml .Values.resources | indent 12 }}
-{{- end }}
-      volumes:
-        - name: config-volume
-          configMap:
-            name: {{ .Values.app.mountedConfigMapName }}
-            optional: true
-{{- if .Values.app.mountedLibsConfigMapName}}
-        - name: libs-volume
-          configMap:
-            name: {{ .Values.app.mountedLibsConfigMapName }}
-            optional: true
-{{- end}}
-{{- with .Values.nodeSelector }}
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 8 }}
-{{- end }}
-{{- with .Values.affinity }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
       affinity:
-{{ toYaml . | indent 8 }}
-{{- end }}
-{{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
-{{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

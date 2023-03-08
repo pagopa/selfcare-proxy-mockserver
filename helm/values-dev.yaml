@@ -1,5 +1,6 @@
 image:
-  repository: mockserver/mockserver
+  repository: selcuacr.azurecr.io/selfcareproxymockserver
+  tag: 5.15.0
 
 ingress:
   annotations:

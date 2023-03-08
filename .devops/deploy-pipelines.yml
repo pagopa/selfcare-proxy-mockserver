@@ -76,7 +76,34 @@ stages:
   #             targetPath: '$(System.DefaultWorkingDirectory)/helm'
   #             artifact: 'helm'
   #             publishLocation: 'pipeline'
-  
+  - stage: 'DataPreparation'
+    displayName: 'Configuring_environment_to_deploy_into_${{ variables.environment }}'
+    jobs:
+      - job: DeterminingVersion
+        displayName: DeterminingVersion
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: Bash@3
+            displayName: Get docker image version
+            name: getDockerImageVersion
+            condition: succeeded()
+            env:
+              VALUES_FILE: "helm/values-${{ lower(variables.environment) }}.yaml"
+              CHART_FILE: "helm/Chart.yaml"
+            inputs:
+              targetType: 'inline'
+              script: |
+                version=$(cat $VALUES_FILE | grep '^  tag:' | sed 's/^  tag:\s*//')
+                echo -e "\nappVersion: \"$version\"" >> $CHART_FILE
+                echo "##vso[task.setvariable variable=dockerImageVersion;isOutput=true]$version"
+              failOnStderr: true
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Artifact helm'
+            inputs:
+              targetPath: 'helm'
+              artifact: 'helm'
+              publishLocation: 'pipeline'
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     condition: and( succeeded(), ${{ parameters.executeBuild }} )
@@ -106,7 +133,7 @@ stages:
               command: 'Build'
               Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
               buildContext: '$(Build.Repository.LocalPath)'
-              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
+              # arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
               tags: |
                 $(Build.BuildNumber)
                 latest

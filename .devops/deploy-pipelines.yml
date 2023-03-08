@@ -89,6 +89,17 @@ stages:
               steps:
                 - download: none
                 - checkout: self
+                - task: Bash@3
+                  displayName: Get POM version
+                  name: getpomversion
+                  condition: succeeded()
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      ls -la
+                      echo $(Pipeline.Workspace)
+                      pwd
+                    failOnStderr: true
                 # - task: DownloadPipelineArtifact@2
                 #   inputs:
                 #     buildType: 'current'

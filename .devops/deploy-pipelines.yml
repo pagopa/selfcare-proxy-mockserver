@@ -59,8 +59,7 @@ pool:
 stages:
   - stage: 'Publish_artifact_helm'
     displayName: 'Publish_artifact_Helm'
-    dependsOn: Build
-    condition: or(succeeded(), not(${{ parameters.executeBuild }}) )
+    condition: succeeded()
     jobs:
       - job: Publish_artifact_helm
         displayName: Publish_artifact_helm
@@ -76,7 +75,7 @@ stages:
               publishLocation: 'pipeline'
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
-    dependsOn: []
+    dependsOn: "Publish_artifact_helm"
     condition: succeeded()
     jobs:
       - deployment: 'Deploy_to_${{ parameters.environment }}'

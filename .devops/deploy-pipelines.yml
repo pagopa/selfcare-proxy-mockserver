@@ -95,7 +95,7 @@ stages:
                     script: |
                       pwd
                       ls -la
-                      ls -la &(pwd)/helm
+                      ls -la $(pwd)/helm
                       ls -la $(System.DefaultWorkingDirectory)/helm
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2

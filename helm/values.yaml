@@ -5,6 +5,12 @@ namespace: selc
 
 releasenameOverride: ""
 
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+
 app:
   logLevel: "INFO"
   serverPort: "1080"

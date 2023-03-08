@@ -58,14 +58,14 @@ spec:
               protocol: TCP
           readinessProbe:
             httpGet:
-              path: /liveness/probe
+              path: /mockserver/status
               port: management
             periodSeconds: 10
             failureThreshold: 5
             initialDelaySeconds: 30
           livenessProbe:
             httpGet:
-              path: "/liveness/probe"
+              path: "/mockserver/status"
               port: management
             periodSeconds: 10
             failureThreshold: 5

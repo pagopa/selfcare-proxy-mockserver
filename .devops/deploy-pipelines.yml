@@ -98,6 +98,8 @@ stages:
                       ls -la
                       echo $(Pipeline.Workspace)
                       ls -la $(Pipeline.Workspace)
+                      echo "ls -la Workspace/helm"
+                      ls -la $(Pipeline.Workspace)/helm
                       pwd
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2

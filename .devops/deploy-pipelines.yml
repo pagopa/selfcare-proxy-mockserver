@@ -11,7 +11,7 @@ parameters:
   - name: environment
     displayName: Target Environment
     type: string
-    default: dev
+    default: DEV
     values:
       - DEV
       - UAT
@@ -20,17 +20,12 @@ parameters:
     displayName: Version of the docker image
     type: string
     default: 5.15.0
-  - name: 'executeBuild'
-    displayName: 'Remove this flag to skip build and proceed to deploy a docker image previously built'
-    type: boolean
-    default: true
 
 variables:
   dockerfileRelativePath: '$(DOCKERFILE)' # DockerfileV1
   imageRepository: '$(K8S_IMAGE_REPOSITORY_NAME)'
   deployNamespace: '$(DEPLOY_NAMESPACE)'
   deploymentName: '$(DEPLOYMENT_NAME)'
-  port: 8080
   # Agent VM image name for Build
   vmImageNameDefault: 'ubuntu-latest'
 
@@ -42,14 +37,14 @@ variables:
     selfHostedAgentPool: $(DEV_AGENT_POOL)
     replicas: 1 #$(DEV_REPLICAS)
   ${{ if eq(parameters['environment'], 'UAT') }}:
-    environment: 'DEV'
+    environment: 'UAT'
     dockerRegistryServiceConnection: '$(UAT_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(UAT_AGENT_POOL)
     replicas: 1 #$(UAT_REPLICAS)
   ${{ if eq(parameters['environment'], 'PROD') }}:
-    environment: 'DEV'
+    environment: 'PROD'
     dockerRegistryServiceConnection: '$(PROD_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'
@@ -116,8 +111,8 @@ stages:
                     chartPath: $(System.DefaultWorkingDirectory)/helm
                     chartName: $(K8S_IMAGE_REPOSITORY_NAME)
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
-                    # valueFile: "$(System.DefaultWorkingDirectory)/helm/values-${{ lower(variables.environment) }}.yaml"
-                    valueFile: "$(System.DefaultWorkingDirectory)/helm/values-x.yaml"
+                    valueFile: "$(System.DefaultWorkingDirectory)/helm/values-${{ lower(variables.environment) }}.yaml"
+                    #valueFile: "$(System.DefaultWorkingDirectory)/helm/values-x.yaml"
                     install: true
                     waitForExecution: true
                     arguments: "--timeout 2m0s"

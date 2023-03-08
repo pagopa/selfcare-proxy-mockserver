@@ -1,0 +1,19 @@
+image:
+  repository: mockserver/mockserver
+
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://uat.selfcare.pagopa.it,http://localhost:3000"
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+configEnvSpecific:
+  MOCKSERVER_INITIALIZATION_JSON_PATH: "/services/*.json"
+  MOCKSERVER_ENABLE_CORS_FOR_API: "true"
+  MOCKSERVER_ENABLE_CORS_FOR_ALL_RESPONSES: "true"
+  MOCKSERVER_LIVENESS_HTTP_GET_PATH: "/mockserver/status"

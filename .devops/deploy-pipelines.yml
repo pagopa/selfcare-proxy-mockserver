@@ -70,7 +70,7 @@ stages:
   #           displayName: 'Publish Artifact manifests'
   #           condition: succeeded()
   #           inputs:
-  #             targetPath: '$(Pipeline.Workspace)/helm'
+  #             targetPath: '$(System.DefaultWorkingDirectory)/helm'
   #             artifact: 'helm'
   #             publishLocation: 'pipeline'
   - stage: 'Deploy'
@@ -97,16 +97,16 @@ stages:
                     script: |
                       pwd
                       ls -la $(System.DefaultWorkingDirectory)/helm
-                      echo $(Pipeline.Workspace)
-                      ls -la $(Pipeline.Workspace)
+                      echo $(System.DefaultWorkingDirectory)
+                      ls -la $(System.DefaultWorkingDirectory)
                       echo "ls -la Workspace/helm"
-                      ls -la $(Pipeline.Workspace)/helm
+                      ls -la $(System.DefaultWorkingDirectory)/helm
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2
                 #   inputs:
                 #     buildType: 'current'
                 #     artifactName: 'helm'
-                #     targetPath: '$(Pipeline.Workspace)/helm'
+                #     targetPath: '$(System.DefaultWorkingDirectory)/helm'
                 - task: HelmDeploy@0
                   displayName: Helm upgrade
                   inputs:
@@ -114,10 +114,10 @@ stages:
                     namespace: '$(deployNamespace)'
                     command: upgrade
                     chartType: filepath
-                    chartPath: $(Pipeline.Workspace)/helm
+                    chartPath: $(System.DefaultWorkingDirectory)/helm
                     chartName: $(K8S_IMAGE_REPOSITORY_NAME)
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
-                    valueFile: "$(Pipeline.Workspace)/helm/values.yaml"
+                    valueFile: "$(System.DefaultWorkingDirectory)/helm/values.yaml"
                     install: true
                     waitForExecution: true
                     arguments: "--timeout 2m0s"

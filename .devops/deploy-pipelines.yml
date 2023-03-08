@@ -32,7 +32,8 @@ variables:
   deploymentName: '$(DEPLOYMENT_NAME)'
   # Agent VM image name for Build
   vmImageNameDefault: 'ubuntu-latest'
-
+  dockerImageVersion: parameters['environment']
+  
   ${{ if eq(parameters['environment'], 'DEV') }}:
     environment: 'DEV'
     dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'
@@ -94,15 +95,15 @@ stages:
               command: 'Build'
               Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
               buildContext: '$(Build.Repository.LocalPath)'
-              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(version)
+              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
               tags: |
                 $(Build.BuildNumber)
                 latest
-                $(version)
+                $(dockerImageVersion)
           - script: |
               docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
               docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'
-              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(version)' '$(containerRegistry)/$(imageRepository):$(version)'
+              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(dockerImageVersion)' '$(containerRegistry)/$(imageRepository):$(dockerImageVersion)'
             displayName: 'Tag_image'
           - task: Docker@2
             displayName: 'Publish_image_to_${{ variables.environment }}'
@@ -116,7 +117,7 @@ stages:
               tags: |
                 $(Build.BuildNumber)
                 latest
-                $(version)
+                $(dockerImageVersion)
 
 
               

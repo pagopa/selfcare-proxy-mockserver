@@ -35,6 +35,7 @@ variables:
   vmImageNameDefault: 'ubuntu-latest'
 
   ${{ if eq(parameters['environment'], 'DEV') }}:
+    environment: 'DEV'
     dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'

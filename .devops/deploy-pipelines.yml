@@ -57,22 +57,22 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-  - stage: 'Publish_artifact_helm'
-    displayName: 'Publish_artifact_Helm'
-    condition: succeeded()
-    jobs:
-      - job: Publish_artifact_helm
-        displayName: Publish_artifact_helm
-        pool:
-          vmImage: $(vmImageNameDefault)
-        steps:
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish Artifact manifests'
-            condition: succeeded()
-            inputs:
-              targetPath: '$(Pipeline.Workspace)/helm'
-              artifact: 'helm'
-              publishLocation: 'pipeline'
+  # - stage: 'Publish_artifact_helm'
+  #   displayName: 'Publish_artifact_Helm'
+  #   condition: succeeded()
+  #   jobs:
+  #     - job: Publish_artifact_helm
+  #       displayName: Publish_artifact_helm
+  #       pool:
+  #         vmImage: $(vmImageNameDefault)
+  #       steps:
+  #         - task: PublishPipelineArtifact@1
+  #           displayName: 'Publish Artifact manifests'
+  #           condition: succeeded()
+  #           inputs:
+  #             targetPath: '$(Pipeline.Workspace)/helm'
+  #             artifact: 'helm'
+  #             publishLocation: 'pipeline'
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
     dependsOn: "Publish_artifact_helm"
@@ -88,11 +88,11 @@ stages:
             deploy:
               steps:
                 - download: none
-                - task: DownloadPipelineArtifact@2
-                  inputs:
-                    buildType: 'current'
-                    artifactName: 'helm'
-                    targetPath: '$(Pipeline.Workspace)/helm'
+                # - task: DownloadPipelineArtifact@2
+                #   inputs:
+                #     buildType: 'current'
+                #     artifactName: 'helm'
+                #     targetPath: '$(Pipeline.Workspace)/helm'
                 - task: HelmDeploy@0
                   displayName: Helm upgrade
                   inputs:

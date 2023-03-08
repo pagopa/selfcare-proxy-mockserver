@@ -119,7 +119,7 @@ stages:
                     #valueFile: "$(System.DefaultWorkingDirectory)/helm/values-x.yaml"
                     install: true
                     waitForExecution: true
-                    arguments: "--timeout 2m0s"
+                    arguments: "--timeout 1m0s"
                 - task: KubernetesManifest@0
                   displayName: Patch deployment to force the reload
                   inputs:

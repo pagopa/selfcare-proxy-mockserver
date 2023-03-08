@@ -99,6 +99,7 @@ stages:
                     script: |
                       ls -la
                       echo $(Pipeline.Workspace)
+                      ls -la $(Pipeline.Workspace)
                       pwd
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2

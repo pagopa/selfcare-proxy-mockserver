@@ -75,7 +75,7 @@ stages:
   #             publishLocation: 'pipeline'
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
-    dependsOn: "Publish_artifact_helm"
+    dependsOn: [] #"Publish_artifact_helm"
     condition: succeeded()
     jobs:
       - deployment: 'Deploy_to_${{ parameters.environment }}'

@@ -23,7 +23,7 @@ app:
 
 image:
   pullPolicy: Always
-  tag: latest
+  tag: 5.15.0
   # repository: mockserver/mockserver
   # tag: 5.15.0
   # Overrides the image tag whose default is the chart appVersion.

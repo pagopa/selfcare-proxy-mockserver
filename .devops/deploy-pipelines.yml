@@ -89,6 +89,7 @@ stages:
               steps:
                 - download: none
                 - checkout: self
+                  path: $(Pipeline.Workspace)
                 - task: Bash@3
                   displayName: Get POM version
                   name: getpomversion

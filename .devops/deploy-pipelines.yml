@@ -85,6 +85,8 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+                  clean: true 
                 - download: none
                 - task: Bash@3
                   displayName: Get POM version

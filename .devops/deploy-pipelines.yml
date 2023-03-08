@@ -32,8 +32,8 @@ variables:
   deploymentName: '$(DEPLOYMENT_NAME)'
   # Agent VM image name for Build
   vmImageNameDefault: 'ubuntu-latest'
-  dockerImageVersion: parameters['environment']
-  
+  dockerImageVersion: ${parameters['version']}
+
   ${{ if eq(parameters['environment'], 'DEV') }}:
     environment: 'DEV'
     dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'

@@ -1,5 +1,5 @@
 image:
-  repository: selcdacr.azurecr.io/selfcaremscore
+  repository: selcdacr.azurecr.io/selfcareproxymockserver
 
 ingress:
   annotations:

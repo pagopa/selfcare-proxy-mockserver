@@ -42,12 +42,14 @@ variables:
     selfHostedAgentPool: $(DEV_AGENT_POOL)
     replicas: 1 #$(DEV_REPLICAS)
   ${{ if eq(parameters['environment'], 'UAT') }}:
+    environment: 'DEV'
     dockerRegistryServiceConnection: '$(UAT_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(UAT_AGENT_POOL)
     replicas: 1 #$(UAT_REPLICAS)
   ${{ if eq(parameters['environment'], 'PROD') }}:
+    environment: 'DEV'
     dockerRegistryServiceConnection: '$(PROD_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'

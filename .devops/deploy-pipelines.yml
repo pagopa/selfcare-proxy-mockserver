@@ -79,7 +79,6 @@ stages:
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     condition: and( succeeded(), ${{ parameters.executeBuild }} )
-    dependsOn: DataPreparation
     variables:
       dockerImageVersion: $[ stageDependencies.DataPreparation.DeterminingVersion.outputs['getDockerImageVersion.dockerImageVersion'] ]
     jobs:
@@ -125,7 +124,7 @@ stages:
               
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
-    dependsOn: [] #"Publish_artifact_helm"
+    dependsOn: "Build" #"Publish_artifact_helm"
     condition: succeeded()
     jobs:
       - deployment: 'Deploy_to_${{ parameters.environment }}'

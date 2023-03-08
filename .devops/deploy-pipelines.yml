@@ -96,7 +96,7 @@ stages:
                     targetType: 'inline'
                     script: |
                       pwd
-                      ls -la $(Agent.WorkFolder)/helm
+                      ls -la $(System.DefaultWorkingDirectory)/helm
                       echo $(Pipeline.Workspace)
                       ls -la $(Pipeline.Workspace)
                       echo "ls -la Workspace/helm"

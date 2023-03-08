@@ -1,0 +1,223 @@
+# Azure DevOps pipeline to release a new version and deploy to production.
+
+# Only manual activations are intended
+trigger: none
+pr: none
+
+resources:
+  - repo: self
+
+parameters:
+  - name: environment
+    displayName: Target Environment
+    type: string
+    default: DEV
+    values:
+      - DEV
+      - UAT
+      - PROD
+  - name: version
+    displayName: Version of the docker image
+    type: string
+    default: 5.15.0
+  - name: 'executeBuild'
+    displayName: 'Remove this flag to skip build and proceed to deploy a docker image previously built'
+    type: boolean
+    default: true
+
+variables:
+  dockerfileRelativePath: '$(DOCKERFILE)' # DockerfileV1
+  imageRepository: '$(K8S_IMAGE_REPOSITORY_NAME)'
+  deployNamespace: '$(DEPLOY_NAMESPACE)'
+  deploymentName: '$(DEPLOYMENT_NAME)'
+  # Agent VM image name for Build
+  vmImageNameDefault: 'ubuntu-latest'
+  dockerImageVersion: ${{ parameters.version }}
+
+  ${{ if eq(parameters['environment'], 'DEV') }}:
+    environment: 'DEV'
+    dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'
+    kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
+    containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'
+    selfHostedAgentPool: $(DEV_AGENT_POOL)
+    replicas: 1 #$(DEV_REPLICAS)
+  ${{ if eq(parameters['environment'], 'UAT') }}:
+    environment: 'UAT'
+    dockerRegistryServiceConnection: '$(UAT_CONTAINER_REGISTRY_SERVICE_CONN)'
+    kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
+    containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
+    selfHostedAgentPool: $(UAT_AGENT_POOL)
+    replicas: 1 #$(UAT_REPLICAS)
+  ${{ if eq(parameters['environment'], 'PROD') }}:
+    environment: 'PROD'
+    dockerRegistryServiceConnection: '$(PROD_CONTAINER_REGISTRY_SERVICE_CONN)'
+    kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
+    containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'
+    selfHostedAgentPool: $(PROD_AGENT_POOL)
+    replicas: 1 #$(PROD_REPLICAS)
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  # - stage: 'Publish_artifact_helm'
+  #   displayName: 'Publish_artifact_Helm'
+  #   condition: succeeded()
+  #   jobs:
+  #     - job: Publish_artifact_helm
+  #       displayName: Publish_artifact_helm
+  #       pool:
+  #         vmImage: $(vmImageNameDefault)
+  #       steps:
+  #         - task: PublishPipelineArtifact@1
+  #           displayName: 'Publish Artifact manifests'
+  #           condition: succeeded()
+  #           inputs:
+  #             targetPath: '$(System.DefaultWorkingDirectory)/helm'
+  #             artifact: 'helm'
+  #             publishLocation: 'pipeline'
+  - stage: 'DataPreparation'
+    displayName: 'Configuring_environment_to_deploy_into_${{ variables.environment }}'
+    jobs:
+      - job: DeterminingVersion
+        displayName: DeterminingVersion
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: Bash@3
+            displayName: Get docker image version
+            name: getDockerImageVersion
+            condition: succeeded()
+            env:
+              VALUES_FILE: "helm/values-${{ lower(variables.environment) }}.yaml"
+              CHART_FILE: "helm/Chart.yaml"
+            inputs:
+              targetType: 'inline'
+              script: |
+                version=$(cat $VALUES_FILE | grep '^  tag:' | sed 's/^  tag:\s*//')
+                echo -e "\nappVersion: \"$version\"" >> $CHART_FILE
+                echo "##vso[task.setvariable variable=dockerImageVersion;isOutput=true]$version"
+              failOnStderr: true
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Artifact helm'
+            inputs:
+              targetPath: 'helm'
+              artifact: 'helm'
+              publishLocation: 'pipeline'
+  - stage: 'Build'
+    displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
+    condition: and( succeeded(), ${{ parameters.executeBuild }} )
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: Bash@3
+            displayName: Get variables
+            name: getpomversion
+            condition: succeeded()
+            inputs:
+              targetType: 'inline'
+              script: |
+                pwd
+                ls -la
+                ls -la $(pwd)/services/
+                echo '$(imageRepository)'
+                echo '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+                echo $(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
+          - task: Docker@2
+            displayName: 'Build_image'
+            condition: succeeded()
+            inputs:
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(imageRepository)'
+              command: 'Build'
+              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+              buildContext: '$(Build.Repository.LocalPath)'
+              # arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
+              tags: |
+                $(Build.BuildNumber)
+                latest
+                $(dockerImageVersion)
+          # - script: |
+          #     docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
+          #     docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'
+          #     docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(dockerImageVersion)' '$(containerRegistry)/$(imageRepository):$(dockerImageVersion)'
+          #   displayName: 'Tag_image'
+          - task: Docker@2
+            displayName: 'Publish_image_to_${{ variables.environment }}'
+            condition: succeeded()
+            inputs:
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(imageRepository)'
+              command: 'push'
+              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+              buildContext: '$(Build.Repository.LocalPath)'
+              tags: |
+                $(Build.BuildNumber)
+                latest
+                $(dockerImageVersion)
+
+
+              
+  - stage: 'Deploy'
+    displayName: 'Deploy_to_${{ parameters.environment }}'
+    dependsOn: "Build" #"Publish_artifact_helm"
+    condition: succeeded()
+    jobs:
+      - deployment: 'Deploy_to_${{ parameters.environment }}'
+        displayName: 'Deploy_to_${{ parameters.environment }}'
+        pool:
+          name: $(selfHostedAgentPool)
+        environment: '${{ parameters.environment }}'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                # - checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+                #   clean: true 
+                - download: none
+                - task: Bash@3
+                  displayName: Get Custom data
+                  name: getpomversion
+                  condition: succeeded()
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      pwd
+                      ls -la
+                      ls -la $(pwd)/helm
+                      ls -la $(Build.Repository.LocalPath)
+
+                    failOnStderr: true
+                # - task: DownloadPipelineArtifact@2
+                #   inputs:
+                #     buildType: 'current'
+                #     artifactName: 'helm'
+                #     targetPath: '$(System.DefaultWorkingDirectory)/helm'
+                - task: HelmDeploy@0
+                  displayName: Helm upgrade
+                  inputs:
+                    kubernetesServiceEndpoint: ${{ variables.kubernetesServiceConnection }}
+                    namespace: '$(deployNamespace)'
+                    command: upgrade
+                    chartType: filepath
+                    chartPath: $(System.DefaultWorkingDirectory)/helm
+                    chartName: $(K8S_IMAGE_REPOSITORY_NAME)
+                    releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
+                    valueFile: "$(System.DefaultWorkingDirectory)/helm/values-${{ lower(variables.environment) }}.yaml"
+                    #valueFile: "$(System.DefaultWorkingDirectory)/helm/values-x.yaml"
+                    install: true
+                    waitForExecution: true
+                    arguments: "--timeout 1m0s"
+                # - task: KubernetesManifest@0
+                #   displayName: Patch deployment to force the reload
+                #   inputs:
+                #     kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
+                #     namespace: '$(deployNamespace)'
+                #     action: patch
+                #     kind: deployment
+                #     name: '$(deploymentName)'
+                #     mergeStrategy: strategic
+                #     patch: '{"spec":{"template":{"metadata":{"annotations":{"buildNumber":"$(Build.BuildNumber)"}}}}}'

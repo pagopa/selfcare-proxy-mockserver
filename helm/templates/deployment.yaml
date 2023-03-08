@@ -48,13 +48,13 @@ spec:
                   fieldPath: metadata.namespace
           ports:
             - name: management
-              containerPort: 8558
+              containerPort: 1080
               protocol: TCP
             - name: http
-              containerPort: 8088
+              containerPort: 1080
               protocol: TCP
             - name: monitoring
-              containerPort: 9095
+              containerPort: 1080
               protocol: TCP
           readinessProbe:
             httpGet:

@@ -128,7 +128,7 @@ stages:
             displayName: 'Build_image'
             condition: succeeded()
             inputs:
-              containerRegistry: '$(COMMON_CONTAINER_REGISTRY_SERVICE_CONN)'
+              containerRegistry: '$(dockerRegistryServiceConnection)'
               repository: '$(imageRepository)'
               command: 'Build'
               Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'

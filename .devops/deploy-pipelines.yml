@@ -138,11 +138,11 @@ stages:
                 $(Build.BuildNumber)
                 latest
                 $(dockerImageVersion)
-          - script: |
-              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
-              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'
-              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(dockerImageVersion)' '$(containerRegistry)/$(imageRepository):$(dockerImageVersion)'
-            displayName: 'Tag_image'
+          # - script: |
+          #     docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
+          #     docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'
+          #     docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(dockerImageVersion)' '$(containerRegistry)/$(imageRepository):$(dockerImageVersion)'
+          #   displayName: 'Tag_image'
           - task: Docker@2
             displayName: 'Publish_image_to_${{ variables.environment }}'
             condition: succeeded()

@@ -71,7 +71,7 @@ stages:
             displayName: 'Publish Artifact manifests'
             condition: succeeded()
             inputs:
-              targetPath: '$(Build.Repository.LocalPath)/helm'
+              targetPath: '$(Pipeline.Workspace)/helm'
               artifact: 'helm'
               publishLocation: 'pipeline'
   - stage: 'Deploy'

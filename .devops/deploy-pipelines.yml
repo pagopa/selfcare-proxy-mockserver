@@ -101,16 +101,15 @@ stages:
             displayName: 'Build_image'
             condition: succeeded()
             inputs:
-              containerRegistry: '$(COMMON_CONTAINER_REGISTRY_SERVICE_CONN)'
-              repository: '$(imageRepository)'
               command: 'Build'
               Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-              buildContext: '$(Build.Repository.LocalPath)'
-              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
+              repository: '$(imageRepository)'
               tags: |
                 $(Build.BuildNumber)
                 latest
                 $(dockerImageVersion)
+              containerRegistry: '$(COMMON_CONTAINER_REGISTRY_SERVICE_CONN)'
+              buildContext: '$(Build.Repository.LocalPath)'
           - script: |
               docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
               docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'

@@ -1,5 +1,4 @@
-ARG APP_IMAGE=mockserver/mockserver
-FROM $APP_IMAGE as mockserver
+FROM mockserver/mockserver as mockserver
 COPY services/* ./config/*
-RUN true
 EXPOSE 1080
+CMD []

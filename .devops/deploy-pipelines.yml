@@ -96,7 +96,7 @@ stages:
                       pwd
                       ls -la
                       ls -la $(pwd)/helm
-                      ls -la $(System.DefaultWorkingDirectory)/helm
+                      ls -la $(Build.Repository.LocalPath)
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2
                 #   inputs:

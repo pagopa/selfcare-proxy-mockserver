@@ -100,10 +100,6 @@ stages:
                     script: |
                       pwd
                       ls -la $(System.DefaultWorkingDirectory)/helm
-                      echo $(System.DefaultWorkingDirectory)
-                      ls -la $(System.DefaultWorkingDirectory)
-                      echo "ls -la Workspace/helm"
-                      ls -la $(System.DefaultWorkingDirectory)/helm
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2
                 #   inputs:

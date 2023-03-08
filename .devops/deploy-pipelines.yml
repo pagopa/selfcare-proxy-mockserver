@@ -86,6 +86,17 @@ stages:
         pool:
           vmImage: $(vmImageNameDefault)
         steps:
+          - task: Bash@3
+            displayName: Get variables
+            name: getpomversion
+            condition: succeeded()
+            inputs:
+              targetType: 'inline'
+              script: |
+                echo '$(COMMON_CONTAINER_REGISTRY_SERVICE_CONN)'
+                echo '$(imageRepository)'
+                echo '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
+                echo $(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
           - task: Docker@2
             displayName: 'Build_image'
             condition: succeeded()
@@ -149,6 +160,7 @@ stages:
                       ls -la
                       ls -la $(pwd)/helm
                       ls -la $(Build.Repository.LocalPath)
+
                     failOnStderr: true
                 # - task: DownloadPipelineArtifact@2
                 #   inputs:

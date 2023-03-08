@@ -1,5 +1,5 @@
 mockserver:
-  image: mockserver/mockserver
+  image: mockserver/mockserver:5.15.0
   ports:
     - '1080:1080'
   environment:

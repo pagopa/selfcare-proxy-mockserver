@@ -13,7 +13,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 configEnvSpecific:
-  MOCKSERVER_INITIALIZATION_JSON_PATH: "/services/*.json"
+  MOCKSERVER_INITIALIZATION_JSON_PATH: "/config/*.json"
   MOCKSERVER_ENABLE_CORS_FOR_API: "true"
   MOCKSERVER_ENABLE_CORS_FOR_ALL_RESPONSES: "true"
   MOCKSERVER_LIVENESS_HTTP_GET_PATH: "/mockserver/status"

@@ -120,7 +120,9 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                echo '$(COMMON_CONTAINER_REGISTRY_SERVICE_CONN)'
+                pwd
+                ls -la
+                ls -la $(pwd)/services/
                 echo '$(imageRepository)'
                 echo '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
                 echo $(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
@@ -177,7 +179,7 @@ stages:
                 #   clean: true 
                 - download: none
                 - task: Bash@3
-                  displayName: Get POM version
+                  displayName: Get Custom data
                   name: getpomversion
                   condition: succeeded()
                   inputs:

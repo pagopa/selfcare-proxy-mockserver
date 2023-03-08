@@ -57,6 +57,23 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
+  - stage: 'Publish_artifact_helm'
+    displayName: 'Publish_artifact_Helm'
+    dependsOn: Build
+    condition: or(succeeded(), not(${{ parameters.executeBuild }}) )
+    jobs:
+      - job: Publish_artifact_helm
+        displayName: Publish_artifact_helm
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Artifact manifests'
+            condition: succeeded()
+            inputs:
+              targetPath: '$(Build.Repository.LocalPath)/helm'
+              artifact: 'helm'
+              publishLocation: 'pipeline'
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.environment }}'
     dependsOn: []

@@ -79,8 +79,6 @@ stages:
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     condition: and( succeeded(), ${{ parameters.executeBuild }} )
-    variables:
-      dockerImageVersion: $[ stageDependencies.DataPreparation.DeterminingVersion.outputs['getDockerImageVersion.dockerImageVersion'] ]
     jobs:
       - job: Build
         displayName: Build
@@ -96,15 +94,15 @@ stages:
               command: 'Build'
               Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
               buildContext: '$(Build.Repository.LocalPath)'
-              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(dockerImageVersion)
+              arguments: --build-arg APP_IMAGE=$(DOCKER_BASE_IMAGE_NAME):$(version)
               tags: |
                 $(Build.BuildNumber)
                 latest
-                $(dockerImageVersion)
+                $(version)
           - script: |
               docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):latest' '$(containerRegistry)/$(imageRepository):latest'
               docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(Build.BuildNumber)' '$(containerRegistry)/$(imageRepository):$(Build.BuildNumber)'
-              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(dockerImageVersion)' '$(containerRegistry)/$(imageRepository):$(dockerImageVersion)'
+              docker tag '$(COMMON_CONTAINER_REGISTRY_NAME)/$(imageRepository):$(version)' '$(containerRegistry)/$(imageRepository):$(version)'
             displayName: 'Tag_image'
           - task: Docker@2
             displayName: 'Publish_image_to_${{ variables.environment }}'
@@ -118,7 +116,7 @@ stages:
               tags: |
                 $(Build.BuildNumber)
                 latest
-                $(dockerImageVersion)
+                $(version)
 
 
               

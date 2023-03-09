@@ -71,6 +71,72 @@
   {
     "httpRequest": {
       "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CCRMCT06A03A433H",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"CCRMCT06A03A433H\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"CCRMCT06A03A433H\", \"denominazione\":\"Marco Tullio Cicerone\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/SNCLNN65D19Z131V",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"SNCLNN65D19Z131V\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"20517490320\", \"denominazione\":\"LuAnSe SpA\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CTNMCP34B16H501T",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"CTNMCP34B16H501T\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"70472431207\", \"denominazione\":\"VeryBadCaligola Snc\"}, {\"cfImpresa\":\"27937810870\", \"denominazione\":\"DisTerminatio Sas\"}, {\"cfImpresa\":\"12825810299\", \"denominazione\":\"Effimera Stoica S.r.l.\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
       "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CIACIA80A01H501X",
       "headers": {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"

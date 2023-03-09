@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "this.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "this.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "this.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmaps.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        actorSystemName: {{ include "this.fullname" . }}
+        {{- include "this.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.commandConfig }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "this.fullname" . }}
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          ports:
+            - name: management
+              containerPort: 1080
+              protocol: TCP
+            - name: http
+              containerPort: 1080
+              protocol: TCP
+            - name: monitoring
+              containerPort: 1080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /mockserver/status
+              port: management
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 30
+          livenessProbe:
+            httpGet:
+              path: "/mockserver/status"
+              port: management
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 30
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

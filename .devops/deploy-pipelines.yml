@@ -178,24 +178,25 @@ stages:
                 # - checkout: self  # self represents the repo where the initial Pipelines YAML file was found
                 #   clean: true 
                 - download: none
-                - task: Bash@3
-                  displayName: Get Custom data
-                  name: getpomversion
-                  condition: succeeded()
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      pwd
-                      ls -la
-                      ls -la $(System.DefaultWorkingDirectory)/helm
-                      ls -la $(Build.Repository.LocalPath)
+                # - task: Bash@3
+                #   displayName: Get Custom data
+                #   name: getpomversion
+                #   condition: succeeded()
+                #   inputs:
+                #     targetType: 'inline'
+                #     script: |
+                #       pwd
+                #       ls -la
+                #       ls -la $(System.DefaultWorkingDirectory)/helm
+                #       ls -la $(Build.Repository.LocalPath)
+                #     failOnStderr: true
 
-                    failOnStderr: true
                 # - task: DownloadPipelineArtifact@2
                 #   inputs:
                 #     buildType: 'current'
                 #     artifactName: 'helm'
                 #     targetPath: '$(System.DefaultWorkingDirectory)/helm'
+                
                 - task: HelmDeploy@0
                   displayName: Helm upgrade
                   inputs:

@@ -208,7 +208,6 @@ stages:
                     chartName: $(K8S_IMAGE_REPOSITORY_NAME)
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
                     valueFile: "$(System.DefaultWorkingDirectory)/helm/values-${{ lower(variables.environment) }}.yaml"
-                    #valueFile: "$(System.DefaultWorkingDirectory)/helm/values-x.yaml"
                     install: true
                     waitForExecution: true
                     arguments: "--timeout 1m0s"

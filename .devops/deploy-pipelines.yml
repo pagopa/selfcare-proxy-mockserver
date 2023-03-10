@@ -187,7 +187,7 @@ stages:
                     script: |
                       pwd
                       ls -la
-                      ls -la $(pwd)/helm
+                      ls -la $(System.DefaultWorkingDirectory)/helm
                       ls -la $(Build.Repository.LocalPath)
 
                     failOnStderr: true

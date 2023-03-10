@@ -2,8 +2,10 @@ replicaCount: 1
 
 
 namespace: selc
+fullnameOverride: "mock-server"
 
-releasenameOverride: ""
+containers:
+  portNumber: 1080
 
 autoscaling:
   enabled: false

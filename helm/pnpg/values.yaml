@@ -1,0 +1,67 @@
+replicaCount: 1
+
+
+namespace: pnpg
+fullnameOverride: "mock-server"
+
+containers:
+  portNumber: 1080
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+
+app:
+  logLevel: "INFO"
+  serverPort: "1080"
+  mountedConfigMapName: "mockserver-config"
+  mountedLibsConfigMapName: "mockserver-config"
+  propertiesFileName: "mockserver.properties"
+  readOnlyRootFilesystem: false
+  serviceAccountName: default
+  runAsUser: 65534
+
+image:
+  pullPolicy: Always
+  tag: 5.15.0
+  # repository: mockserver/mockserver
+  # tag: 5.15.0
+  # Overrides the image tag whose default is the chart appVersion.
+#  tag: "latest"
+
+service:
+  annotations: {}
+  clusterIP: ""
+  externalIPs: []
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  type: ClusterIP
+  appPort: 1080
+  nodePort: ""
+  monitoringPort: 9095
+  monitoringTargetPort: monitoring
+  test:
+    image: radial/busyboxplus:curl
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: ""
+      paths:
+        - path: "/(mockserver)/(.*)"
+          pathType: ImplementationSpecific
+  tls: []
+
+podAnnotations: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

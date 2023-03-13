@@ -1,10 +1,11 @@
 image:
   repository: selcdcommonacr.azurecr.io/selfcareproxymockserver
   # tag: 5.15.0
+  # repository: mockserver/mockserver
 
 ingress:
   annotations:
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://dev.selfcare.pagopa.it,http://localhost:3000"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://uat.selfcare.pagopa.it,http://localhost:3000"
 
 autoscaling:
   enabled: false

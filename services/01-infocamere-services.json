@@ -115,7 +115,7 @@
   {
     "httpRequest": {
       "method": "GET",
-      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CTNMCP34B16H501T",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CTNMCP80A01H501M",
       "headers": {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
       },

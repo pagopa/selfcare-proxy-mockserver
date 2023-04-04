@@ -93,7 +93,7 @@
   {
     "httpRequest": {
       "method": "GET",
-      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/SNCLNN65D19Z131V",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/SNCLNN00A01H501S",
       "headers": {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
       },
@@ -109,7 +109,7 @@
     },
     "httpResponseTemplate": {
       "templateType": "VELOCITY",
-      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"SNCLNN65D19Z131V\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"20517490320\", \"denominazione\":\"LuAnSe SpA\"}]}}"
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"SNCLNN00A01H501S\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"20517490320\", \"denominazione\":\"LuAnSe SpA\"}]}}"
     }
   },
   {
@@ -131,7 +131,7 @@
     },
     "httpResponseTemplate": {
       "templateType": "VELOCITY",
-      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"CTNMCP34B16H501T\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"70472431207\", \"denominazione\":\"VeryBadCaligola Snc\"}, {\"cfImpresa\":\"27937810870\", \"denominazione\":\"DisTerminatio Sas\"}, {\"cfImpresa\":\"12825810299\", \"denominazione\":\"Effimera Stoica S.r.l.\"}]}}"
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"CTNMCP80A01H501M\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"70472431207\", \"denominazione\":\"VeryBadCaligola Snc\"}, {\"cfImpresa\":\"27937810870\", \"denominazione\":\"DisTerminatio Sas\"}, {\"cfImpresa\":\"12825810299\", \"denominazione\":\"Effimera Stoica S.r.l.\"}]}}"
     }
   },
   {

@@ -36,8 +36,8 @@ Path: `/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante`
 |-----------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
 | DLLDGI53T30I324E            | 200         | 3 imprese: <ul><li>01501320442-DIEGO DELLA VALLE & C. S.R.L.</li><li>02492030446-DEVA FINANCE S.R.L.</li><li>01113570442-TOD'S S.R.L.</li></ul> |
 | CCRMCT06A03A433H            | 200         | Ditta individuale: CCRMCT06A03A433H-Marco Tullio Cicerone                                                                                       |
-| SNCLNN65D19Z131V            | 200         | 1 impresa: SNCLNN65D19Z131V-LuAnSe SpA                                                                                                          |
-| CTNMCP34B16H501T            | 200         | 3 imprese: <ul><li>70472431207-VeryBadCaligola Snc</li><li>27937810870-DisTerminatio Sas</li><li>12825810299-Effimera Stoica S.r.l.</li></ul>   |
+| SNCLNN00A01H501S            | 200         | 1 impresa: SNCLNN00A01H501S-LuAnSe SpA                                                                                                          |
+| CTNMCP80A01H501M            | 200         | 3 imprese: <ul><li>70472431207-VeryBadCaligola Snc</li><li>27937810870-DisTerminatio Sas</li><li>12825810299-Effimera Stoica S.r.l.</li></ul>   |
 | CIACIA80A01H501X            | 500         | Internal server error                                                                                                                           |
 | Qualsiasi CF o P.IVA valido | 200         | Errore Not found                                                                                                                                |
 

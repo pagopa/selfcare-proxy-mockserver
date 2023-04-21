@@ -137,6 +137,28 @@
   {
     "httpRequest": {
       "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/LGHDNT00P14D612D",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"LGHDNT00P14D612D\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"70412331207\", \"denominazione\":\"DivinaCommedia Srl\"}, {\"cfImpresa\":\"27957814470\", \"denominazione\":\"Convivio Spa\"}, {\"cfImpresa\":\"12666810299\", \"denominazione\":\"Vita Nova Sas\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
       "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/CIACIA80A01H501X",
       "headers": {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"

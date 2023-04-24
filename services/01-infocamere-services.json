@@ -93,6 +93,50 @@
   {
     "httpRequest": {
       "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/PTRFNC04A01C352E",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"PTRFNC04A01C352E\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"SCTPTR04A01C352E\", \"denominazione\":\"Il Secretum srl\"},{\"cfImpresa\":\"LELPTR04A01C352E\", \"denominazione\":\"Le Epistolae srl\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/LPRGCM98A01C352V",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"LPRGCM98A01C352V\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"IFTLPR98A01C352V\", \"denominazione\":\"Infinito srl\"}]}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
       "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/SNCLNN00A01H501S",
       "headers": {
         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"

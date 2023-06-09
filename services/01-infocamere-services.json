@@ -248,5 +248,27 @@
       "templateType": "VELOCITY",
       "template": "{\"statusCode\":200, \"body\":{\"code\": \"WSPA_ERR_04\", \"appName\": \"wspa-lref\", \"description\": \"Legale Rappresentante not found.\", \"timestamp\": \"$date.iso\"}}"
     }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/selfcaremock/ic/ce/wspa/wspa/rest/listaLegaleRappresentante/MNCJRN06M70B675F",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "client_id": [
+          {
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"dataOraEstrazione\":\"$!date.iso\",\"cfPersona\":\"MNCJRN06M70B675F\",\"elencoImpreseRappresentate\":[{\"cfImpresa\":\"01199250158\", \"denominazione\":\"Comune di Milano\"}]}}"
+    }
   }
 ]

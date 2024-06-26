@@ -1,0 +1,89 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/auth/realms/fideiussioni-portal1/protocol/openid-connect/token",
+      "body": {
+        "type": "PARAMETERS",
+        "parameters": {
+          "grant_type": "^.*$",
+          "client_id": "^.*$",
+          "client_secret": "^.*$"
+        }
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"access_token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\",\"expires_in\":\"300\"}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/auth/realms/fideiussioni-portal1/protocol/openid-connect/token"
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":400}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/organizationPA/checkOrganization",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      },
+      "queryStringParameters": {
+        "partitaIva": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^.*$"
+            }
+          }
+        ],
+        "codiceFiscale": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^.*$"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":200,\"body\":{\"alreadyRegistered\":true,\"organization\":null}}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/organizationPA/checkOrganization",
+      "queryStringParameters": {
+        "partitaIva": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^.*$"
+            }
+          }
+        ],
+        "codiceFiscale": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^.*$"
+            }
+          }
+        ]
+      }
+    },
+    "httpResponseTemplate": {
+      "templateType": "VELOCITY",
+      "template": "{\"statusCode\":401}"
+    }
+  }
+]

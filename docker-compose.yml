@@ -1,7 +1,7 @@
 version: "2.4"
 services:
   mockserver:
-    image: mockserver/mockserver
+    image: mockserver/mockserver@sha256:3b9e91077598e2278af1edd5c417813b344212bd267631bb77298193a49981f5
     ports:
       - '1080:1080'
     environment:

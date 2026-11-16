@@ -43,7 +43,7 @@ service:
   monitoringPort: 9095
   monitoringTargetPort: monitoring
   test:
-    image: radial/busyboxplus:curl
+    image: radial/busyboxplus:curl@sha256:a68c05ab1112fd90ad7b14985a48520e9d26dbbe00cb9c09aa79fdc0ef46b372
 
 ingress:
   enabled: false
